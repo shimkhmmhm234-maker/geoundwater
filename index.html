@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3ede2">
+  <meta name="description" content="Test your hydrogeology knowledge with 15 interactive questions covering groundwater occurrence, aquifers, and groundwater hydraulics.">
+  <title>Hydrogeology | Knowledge Check</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;450;500;550;600;650;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sand:#f3ede2; --ink:#221c14; --terracotta:#a8431d; --card:#fbf8f2;
+      --border:#c2b49e; --muted:#766b5c; --green:#285d3d; --green-bg:#e4eee3;
+      --red:#a02e27; --red-bg:#f5e5df; --radius:10px;
+      --space-1:8px; --space-2:16px; --space-3:24px; --space-4:32px;
+      --space-5:48px; --space-6:64px; --font:"IBM Plex Sans",system-ui,sans-serif;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;min-height:100vh;background:var(--sand);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+    button{font:inherit}
+    button:focus-visible{outline:3px solid var(--terracotta);outline-offset:4px}
+    .rock-layers{height:9px;display:flex;flex-direction:column;width:100%}
+    .rock-layers span{flex:1}
+    .rock-layers span:nth-child(1){background:#c49b69}
+    .rock-layers span:nth-child(2){background:#a8431d}
+    .rock-layers span:nth-child(3){background:#b6a58b}
+    .rock-layers span:nth-child(4){background:#e0d4b9}
+    .rock-layers span:nth-child(5){background:#484139}
+    .page{width:min(100% - 40px,640px);margin:0 auto;padding:var(--space-5) 0 var(--space-4);min-height:calc(100vh - 9px);display:flex;flex-direction:column}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);padding-bottom:var(--space-2);border-bottom:1px solid var(--border);margin-bottom:var(--space-5)}
+    .brand{font-size:13px;font-weight:650;letter-spacing:.09em;text-transform:uppercase}
+    .edition{color:var(--muted);font-size:12px;letter-spacing:.04em}
+    main{flex:1}
+    .screen{display:none}
+    .screen.active{display:block}
+    .intro{padding:var(--space-3) 0 var(--space-5)}
+    .eyebrow{color:var(--terracotta);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;margin-bottom:var(--space-2)}
+    h1{font-size:clamp(40px,9vw,62px);line-height:1.04;letter-spacing:-.055em;font-weight:650;max-width:570px;margin:0 0 var(--space-3)}
+    h2{font-size:clamp(25px,6vw,34px);line-height:1.2;letter-spacing:-.035em;font-weight:600;margin:0 0 var(--space-2)}
+    h3{font-size:17px;font-weight:600;margin:0 0 var(--space-1)}
+    .intro-description{max-width:460px;color:#5e5346;font-size:17px;margin:0 0 var(--space-4)}
+    .topic-list{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:var(--space-5)}
+    .topic{border:1px solid var(--border);padding:6px 11px;border-radius:4px;font-size:12px;color:#594c3d;font-weight:500}
+    .intro-meta{display:flex;gap:var(--space-3);flex-wrap:wrap;padding-top:var(--space-2);border-top:1px solid var(--border);margin-top:var(--space-4);color:var(--muted);font-size:13px}
+    .actions{display:flex;flex-wrap:wrap;gap:var(--space-2)}
+    .btn{min-height:50px;padding:12px 22px;border:1px solid var(--ink);border-radius:5px;background:var(--ink);color:var(--card);font-weight:600;font-size:14px;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s}
+    .btn:hover{background:var(--terracotta);border-color:var(--terracotta);color:white}
+    .btn.secondary{background:transparent;color:var(--ink);border-color:var(--border)}
+    .btn.secondary:hover{color:var(--terracotta);border-color:var(--terracotta);background:var(--card)}
+    .quiz-header{margin-bottom:var(--space-4)}
+    .quiz-meta{display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);margin-bottom:12px}
+    .part-label{color:var(--terracotta);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    .question-count{font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .progress-track{height:5px;width:100%;background:#ded4c4;border-radius:2px;overflow:hidden}
+    .progress-fill{height:100%;width:0%;background:var(--terracotta);transition:width .25s ease}
+    .question-area{padding:var(--space-3) 0}
+    .question-number{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.08em;margin-bottom:var(--space-1)}
+    .question-title{font-size:clamp(23px,5.5vw,30px);line-height:1.35;font-weight:600;letter-spacing:-.025em;margin:0 0 var(--space-4)}
+    .options{display:flex;flex-direction:column;gap:11px}
+    .option{width:100%;min-height:58px;display:flex;align-items:center;gap:14px;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--border);border-radius:var(--radius);padding:13px 16px;cursor:pointer;font-size:15px;line-height:1.5;transition:background-color .15s,border-color .15s}
+    .option:hover:not(:disabled){border-color:var(--terracotta);background:#f6eee3}
+    .option-letter{flex-shrink:0;width:29px;height:29px;border:1px solid var(--border);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;font-weight:650}
+    .option:disabled{cursor:default}
+    .option.correct,.option.missed-correct{border-color:var(--green);background:var(--green-bg);color:#1c442c}
+    .option.correct .option-letter{border-color:var(--green);background:var(--green);color:white}
+    .option.wrong{border-color:var(--red);background:var(--red-bg);color:#76231e}
+    .option.wrong .option-letter{border-color:var(--red);background:var(--red);color:white}
+    .feedback{display:none;margin-top:var(--space-3);padding:var(--space-3);border:1px solid var(--border);border-radius:var(--radius);background:var(--card)}
+    .feedback.visible{display:block}
+    .feedback-heading{font-weight:700;font-size:14px;margin-bottom:var(--space-1)}
+    .feedback-heading.good{color:var(--green)}
+    .feedback-heading.bad{color:var(--red)}
+    .feedback p{margin:0;font-size:14px;line-height:1.7;color:#51483c}
+    .next-row{display:flex;justify-content:flex-end;margin-top:var(--space-3)}
+    .keyboard-hint{margin-top:var(--space-4);font-size:12px;color:var(--muted);text-align:center}
+    .keyboard-hint kbd{display:inline-block;min-width:21px;padding:1px 5px;border:1px solid var(--border);border-radius:3px;background:var(--card);color:var(--ink);font-family:var(--font);font-size:11px}
+    .results-intro{margin-bottom:var(--space-4)}
+    .score-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-4);margin-bottom:var(--space-5)}
+    .score-main{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2)}
+    .score-number{font-size:clamp(48px,12vw,70px);font-weight:650;line-height:1;letter-spacing:-.055em;font-variant-numeric:tabular-nums}
+    .score-side{text-align:right}
+    .score-percent{font-size:28px;font-weight:650;color:var(--terracotta)}
+    .score-caption{font-size:12px;color:var(--muted)}
+    .score-divider{height:1px;background:var(--border);margin:var(--space-3) 0}
+    .score-message{font-size:14px;color:#5e5346;margin:0}
+    .best-score{font-size:12px;color:var(--muted);margin-top:9px}
+    .review-heading{margin-bottom:var(--space-3)}
+    .review-list{display:flex;flex-direction:column;gap:13px;margin-bottom:var(--space-4)}
+    .review-item{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:var(--space-3)}
+    .review-item .review-part{color:var(--terracotta);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--space-1)}
+    .review-item h3{font-size:16px;line-height:1.5;margin-bottom:var(--space-2)}
+    .review-answer{font-size:13px;color:var(--green);font-weight:600;margin-bottom:6px}
+    .review-explanation{font-size:13px;color:#5e5346;line-height:1.7;margin:0}
+    .no-missed{padding:var(--space-3);background:var(--green-bg);border:1px solid #9ab49c;border-radius:var(--radius);color:var(--green);font-size:14px;margin-bottom:var(--space-4)}
+    .results-actions{display:flex;flex-wrap:wrap;gap:12px}
+    .results-actions .btn{flex:1 1 170px}
+    footer{border-top:1px solid var(--border);margin-top:var(--space-6);padding-top:var(--space-2);display:flex;justify-content:space-between;align-items:center;gap:var(--space-2);color:var(--muted);font-size:11px}
+    .footer-mark{color:var(--terracotta);font-weight:650;letter-spacing:.08em;text-transform:uppercase}
+    @media(max-width:480px){.page{width:min(100% - 32px,640px);padding-top:var(--space-3)}.topbar{margin-bottom:var(--space-4)}.intro{padding-top:var(--space-2)}.intro-description{font-size:16px}.option{padding:12px;gap:11px}.score-panel{padding:var(--space-3)}footer{margin-top:var(--space-4)}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="rock-layers" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">Field Notes / Hydrogeology</div>
+      <div class="edition">Knowledge Check 01</div>
+    </header>
+    <main>
+      <section id="intro-screen" class="screen active" aria-labelledby="main-title">
+        <div class="intro">
+          <div class="eyebrow">Hydrogeology · Assessment</div>
+          <h1 id="main-title">Groundwater &amp; Aquifer Systems</h1>
+          <p class="intro-description">Test your understanding of groundwater occurrence, aquifer classification, and groundwater hydraulics through 15 carefully selected questions.</p>
+          <div class="topic-list" aria-label="Quiz topics">
+            <span class="topic">01 / Occurrence</span><span class="topic">02 / Aquifers</span><span class="topic">03 / Hydraulics</span>
+          </div>
+          <div class="actions">
+            <button class="btn" id="start-btn" type="button">Start quiz</button>
+            <button class="btn secondary share-btn" type="button">Share link</button>
+          </div>
+          <div class="intro-meta"><span>15 questions</span><span>3 parts</span><span>Multiple choice</span><span>Instant explanations</span></div>
+        </div>
+      </section>
+      <section id="quiz-screen" class="screen" aria-label="Quiz">
+        <div class="quiz-header">
+          <div class="quiz-meta"><span id="part-label" class="part-label">Part 1: Occurrence</span><span id="question-count" class="question-count">Question 1 of 15</span></div>
+          <div class="progress-track" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        </div>
+        <div class="question-area">
+          <div class="question-number" id="question-number">QUESTION 01</div>
+          <h2 class="question-title" id="question-title"></h2>
+          <div class="options" id="options-container"></div>
+          <div class="feedback" id="feedback" aria-live="polite" aria-atomic="true"><div class="feedback-heading" id="feedback-heading"></div><p id="feedback-text"></p></div>
+          <div class="next-row" id="next-row" hidden><button class="btn" id="next-btn" type="button">Next question</button></div>
+          <p class="keyboard-hint">Use <kbd>1</kbd> to <kbd>4</kbd> to answer <span aria-hidden="true"> · </span><kbd>Enter</kbd> to continue</p>
+        </div>
+      </section>
+      <section id="results-screen" class="screen" aria-labelledby="results-title">
+        <div class="results-intro">
+          <div class="eyebrow">Assessment complete</div>
+          <h2 id="results-title">Your results</h2>
+          <p class="intro-description">Review your performance and revisit the concepts that need more attention.</p>
+        </div>
+        <div class="score-panel">
+          <div class="score-main"><div><div class="score-number" id="score-number">0/15</div><div class="score-caption">Correct answers</div></div><div class="score-side"><div class="score-percent" id="score-percent">0%</div><div class="score-caption">Overall score</div></div></div>
+          <div class="score-divider"></div>
+          <p class="score-message" id="score-message"></p>
+          <div class="best-score" id="best-score"></div>
+        </div>
+        <div class="review-heading"><h3>Review your answers</h3><p class="score-caption" id="review-count"></p></div>
+        <div id="review-list" class="review-list"></div>
+        <div class="results-actions">
+          <button class="btn" id="retry-btn" type="button">Retry missed questions</button>
+          <button class="btn secondary" id="retake-btn" type="button">Retake full quiz</button>
+          <button class="btn secondary share-btn" type="button">Share link</button>
+        </div>
+      </section>
+    </main>
+    <footer><span class="footer-mark">Earth / Water / Knowledge</span><span>Hydrogeology Study Series · 01</span></footer>
+  </div>
+  <script>
+    "use strict";
+    const questions = [
+      {id:1,part:"Occurrence",question:"What is the main origin of groundwater?",options:["Precipitation that infiltrates the ground","Steam released only by volcanoes","Desalinated seawater","Condensation inside caves only"],correct:0,explanation:"Precipitation infiltrates the soil and moves down through permeable layers until it reaches the saturated zone."},
+      {id:2,part:"Occurrence",question:"Which of these is NOT a groundwater recharge source?",options:["Irrigation return flow","Seepage from rivers and reservoirs","Evaporation from the soil surface","Leakage from water supply systems"],correct:2,explanation:"Evaporation is a loss of water. The other three add water to the saturated zone."},
+      {id:3,part:"Occurrence",question:"What is the correct order of the recharge stages?",options:["Infiltration, precipitation, percolation, recharge","Precipitation, infiltration, percolation, recharge","Percolation, precipitation, recharge, infiltration","Precipitation, percolation, infiltration, recharge"],correct:1,explanation:"Water falls, enters the soil surface, moves down under gravity, then reaches the saturated zone."},
+      {id:4,part:"Occurrence",question:"What is percolation?",options:["Water entering the soil surface","Water lost to the atmosphere by plants","Downward movement of water through the unsaturated zone under gravity","Water flowing over the surface as runoff"],correct:2,explanation:"Infiltration is entry at the surface. Percolation is the downward movement after that."},
+      {id:5,part:"Occurrence",question:"How can faults affect groundwater movement?",options:["They always increase permeability","They can increase permeability by fracturing, or decrease it when filled with clay or minerals","They have no effect on groundwater","They only matter in sandstone"],correct:1,explanation:"Faults can act as pathways or barriers depending on how they are filled."},
+      {id:6,part:"Occurrence",question:"Which material has high porosity but very low permeability?",options:["Sand","Gravel","Clay","Fractured limestone"],correct:2,explanation:"Clay stores a lot of water, but its tiny, poorly connected pores make flow very slow."},
+      {id:7,part:"Occurrence",question:"Why does massive unfractured granite generally have very low groundwater potential?",options:["It has very low porosity and permeability","It dissolves quickly","It is always saturated with clay","It has large cavities"],correct:0,explanation:"Without fractures, granite has almost no storage or transmitting ability."},
+      {id:8,part:"Aquifers",question:"What forms the upper boundary of a confined aquifer?",options:["The water table","An impermeable or low-permeability layer","A localized saturated lens","Atmospheric air"],correct:1,explanation:"A confined aquifer sits between confining layers, so its water is under pressure above atmospheric."},
+      {id:9,part:"Aquifers",question:"Which description fits a perched aquifer?",options:["Extensive and deep with artesian pressure","Found only in karst terrain","A limited, localized saturated zone","Always confined by two aquitards"],correct:2,explanation:"Perched aquifers are small saturated zones, usually at atmospheric pressure."},
+      {id:10,part:"Aquifers",question:"In a karst aquifer, how does groundwater mainly move?",options:["Between sand grains","Through conduits and caves in limestone","Only through clay layers","By capillary rise only"],correct:1,explanation:"Dissolution creates cavities and channels, so flow is fast and highly variable."},
+      {id:11,part:"Aquifers",question:"What is an aquitard?",options:["A layer that completely stops all flow","A highly productive aquifer","A low-permeability layer that restricts but does not fully prevent flow","A type of well"],correct:2,explanation:"Clay and shale are common aquitards. They control leakage between aquifers."},
+      {id:12,part:"Hydraulics",question:"Which equation is Darcy's law?",options:["Q = K I A","Q = K / (I A)","Q = I A / K","Q = K + I + A"],correct:0,explanation:"Discharge equals hydraulic conductivity times hydraulic gradient times cross-sectional area."},
+      {id:13,part:"Hydraulics",question:"If K and A stay constant and the hydraulic gradient increases, what happens to discharge?",options:["It decreases","It stays the same","It becomes zero","It increases"],correct:3,explanation:"Discharge is directly proportional to the hydraulic gradient."},
+      {id:14,part:"Hydraulics",question:"Which formula gives the average linear groundwater velocity?",options:["v = K i n_e","v = n_e / (K i)","v = K i / n_e","v = K / i"],correct:2,explanation:"Velocity is the Darcy flux (K i) divided by effective porosity."},
+      {id:15,part:"Hydraulics",question:"In which direction does groundwater flow?",options:["From low hydraulic head to high hydraulic head","From high hydraulic head to low hydraulic head","Always downward","Always toward the sea"],correct:1,explanation:"Water moves from higher to lower total head, where head is h = z + P / (rho g)."}
+    ];
+    const screens={intro:document.getElementById("intro-screen"),quiz:document.getElementById("quiz-screen"),results:document.getElementById("results-screen")};
+    const elements={
+      start:document.getElementById("start-btn"),part:document.getElementById("part-label"),count:document.getElementById("question-count"),
+      progress:document.getElementById("progress-bar"),progressFill:document.getElementById("progress-fill"),number:document.getElementById("question-number"),
+      title:document.getElementById("question-title"),options:document.getElementById("options-container"),feedback:document.getElementById("feedback"),
+      feedbackHeading:document.getElementById("feedback-heading"),feedbackText:document.getElementById("feedback-text"),nextRow:document.getElementById("next-row"),
+      next:document.getElementById("next-btn"),score:document.getElementById("score-number"),percentage:document.getElementById("score-percent"),
+      message:document.getElementById("score-message"),best:document.getElementById("best-score"),reviewCount:document.getElementById("review-count"),
+      reviewList:document.getElementById("review-list"),retry:document.getElementById("retry-btn"),retake:document.getElementById("retake-btn")
+    };
+    const LETTERS=["A","B","C","D"];
+    let currentQuestions=[],currentIndex=0,score=0,answered=false,answerHistory=[],shuffledOptions=[];
+    function escapeHTML(value){
+      return String(value).replace(/[&<>"']/g,character=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[character]));
+    }
+    function shuffle(array){
+      const result=[...array];
+      for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}
+      return result;
+    }
+    function showScreen(name){
+      Object.values(screens).forEach(screen=>screen.classList.remove("active"));
+      screens[name].classList.add("active");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    function startQuiz(questionSet){
+      currentQuestions=shuffle(questionSet);currentIndex=0;score=0;answered=false;answerHistory=[];
+      showScreen("quiz");renderQuestion();
+    }
+    function renderQuestion(){
+      const question=currentQuestions[currentIndex];answered=false;
+      shuffledOptions=shuffle(question.options.map((text,index)=>({text,originalIndex:index})));
+      const position=currentIndex+1,total=currentQuestions.length;
+      const partNumber=question.part==="Occurrence"?"1":question.part==="Aquifers"?"2":"3";
+      elements.part.textContent=`Part ${partNumber}: ${question.part}`;
+      elements.count.textContent=`Question ${position} of ${total}`;
+      elements.number.textContent=`QUESTION ${String(position).padStart(2,"0")}`;
+      elements.title.textContent=question.question;
+      elements.progressFill.style.width=`${(currentIndex/total)*100}%`;
+      elements.progress.setAttribute("aria-valuemax",total);
+      elements.progress.setAttribute("aria-valuenow",currentIndex);
+      elements.feedback.classList.remove("visible");
+      elements.feedbackHeading.textContent="";
+      elements.feedbackText.textContent="";
+      elements.feedbackHeading.className="feedback-heading";
+      elements.nextRow.hidden=true;
+      elements.next.textContent=currentIndex===total-1?"See results":"Next question";
+      elements.options.innerHTML="";
+      shuffledOptions.forEach((option,index)=>{
+        const button=document.createElement("button");
+        button.type="button";button.className="option";button.dataset.index=index;
+        button.innerHTML=`<span class="option-letter">${LETTERS[index]}</span><span>${escapeHTML(option.text)}</span>`;
+        button.addEventListener("click",()=>selectAnswer(index));
+        elements.options.appendChild(button);
+      });
+    }
+    function selectAnswer(optionIndex){
+      if(answered)return;
+      answered=true;
+      const question=currentQuestions[currentIndex],selected=shuffledOptions[optionIndex];
+      const isCorrect=selected.originalIndex===question.correct;
+      if(isCorrect)score++;
+      answerHistory.push({question,selectedIndex:selected.originalIndex,isCorrect});
+      const optionButtons=elements.options.querySelectorAll(".option");
+      optionButtons.forEach((button,index)=>{
+        button.disabled=true;
+        if(shuffledOptions[index].originalIndex===question.correct)button.classList.add("correct");
+        else if(index===optionIndex)button.classList.add("wrong");
+      });
+      elements.feedbackHeading.textContent=isCorrect?"Correct answer":"Not quite. Review the correct answer.";
+      elements.feedbackHeading.classList.add(isCorrect?"good":"bad");
+      elements.feedbackText.textContent=question.explanation;
+      elements.feedback.classList.add("visible");
+      elements.nextRow.hidden=false;
+      elements.progressFill.style.width=`${((currentIndex+1)/currentQuestions.length)*100}%`;
+      elements.progress.setAttribute("aria-valuenow",currentIndex+1);
+      elements.next.focus();
+    }
+    function nextQuestion(){
+      if(!answered)return;
+      if(currentIndex<currentQuestions.length-1){currentIndex++;renderQuestion();}
+      else showResults();
+    }
+    function getBestScore(){
+      try{const value=localStorage.getItem("hydrogeologyBestScore");return value===null?null:Number(value);}
+      catch(error){return null;}
+    }
+    function saveBestScore(value){
+      try{const previous=getBestScore();if(previous===null||value>previous)localStorage.setItem("hydrogeologyBestScore",String(value));}
+      catch(error){/* The quiz remains functional if storage is unavailable. */}
+    }
+    function showResults(){
+      const total=currentQuestions.length,percentage=Math.round((score/total)*100);
+      const missed=answerHistory.filter(item=>!item.isCorrect);
+      saveBestScore(percentage);
+      elements.score.textContent=`${score}/${total}`;
+      elements.percentage.textContent=`${percentage}%`;
+      if(percentage===100)elements.message.textContent="Excellent work. You answered every question correctly.";
+      else if(percentage>=80)elements.message.textContent="Strong performance. Review the missed questions to consolidate your understanding.";
+      else if(percentage>=60)elements.message.textContent="A good foundation. Focus on the concepts you missed and try again.";
+      else if(percentage>=40)elements.message.textContent="There is room to improve. Use the explanations as a guide for your next attempt.";
+      else elements.message.textContent="Keep studying. Revisit the fundamentals and use another attempt to measure your progress.";
+      const bestScore=getBestScore();
+      elements.best.textContent=bestScore!==null?`Your best recorded percentage: ${bestScore}%`:"Best score storage is unavailable in this browser.";
+      elements.reviewCount.textContent=missed.length?`${missed.length} question${missed.length===1?"":"s"} to revisit`:"All questions answered correctly";
+      elements.retry.disabled=missed.length===0;
+      elements.retry.textContent=missed.length?"Retry missed questions":"No missed questions";
+      elements.reviewList.innerHTML="";
+      if(missed.length===0){
+        elements.reviewList.innerHTML=`<div class="no-missed">Perfect score. You answered all ${total} questions correctly. There are no missed questions to review.</div>`;
+      }else{
+        missed.forEach((item,index)=>{
+          const article=document.createElement("article");article.className="review-item";
+          article.innerHTML=`<div class="review-part">${escapeHTML(item.question.part)} · Review ${index+1}</div><h3>${escapeHTML(item.question.question)}</h3><div class="review-answer">Correct answer: ${escapeHTML(item.question.options[item.question.correct])}</div><p class="review-explanation">${escapeHTML(item.question.explanation)}</p>`;
+          elements.reviewList.appendChild(article);
+        });
+      }
+      showScreen("results");
+    }
+    async function shareLink(button){
+      const originalLabel="Share link";
+      try{
+        if(navigator.share){
+          await navigator.share({title:"Hydrogeology Knowledge Check",text:"Test your knowledge of groundwater, aquifers, and groundwater hydraulics.",url:window.location.href});
+          return;
+        }
+        if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(window.location.href);
+        else{
+          const temporaryInput=document.createElement("textarea");
+          temporaryInput.value=window.location.href;temporaryInput.style.position="fixed";temporaryInput.style.left="-9999px";
+          document.body.appendChild(temporaryInput);temporaryInput.select();
+          const copied=document.execCommand("copy");temporaryInput.remove();
+          if(!copied)throw new Error("Clipboard access failed");
+        }
+        button.textContent="Link copied";
+        window.setTimeout(()=>{button.textContent=originalLabel;},2500);
+      }catch(error){
+        if(error.name==="AbortError")return;
+        button.textContent="Unable to copy link";
+        window.setTimeout(()=>{button.textContent=originalLabel;},2500);
+      }
+    }
+    elements.start.addEventListener("click",()=>startQuiz(questions));
+    elements.next.addEventListener("click",nextQuestion);
+    elements.retry.addEventListener("click",()=>{
+      const missedQuestions=answerHistory.filter(item=>!item.isCorrect).map(item=>item.question);
+      if(missedQuestions.length)startQuiz(missedQuestions);
+    });
+    elements.retake.addEventListener("click",()=>startQuiz(questions));
+    document.querySelectorAll(".share-btn").forEach(button=>button.addEventListener("click",()=>shareLink(button)));
+    document.addEventListener("keydown",event=>{
+      if(!screens.quiz.classList.contains("active"))return;
+      if(event.target instanceof HTMLInputElement||event.target instanceof HTMLTextAreaElement||event.target instanceof HTMLSelectElement)return;
+      if(!answered&&["1","2","3","4"].includes(event.key)){event.preventDefault();selectAnswer(Number(event.key)-1);}
+      if(answered&&event.key==="Enter"){event.preventDefault();nextQuestion();}
+    });
+  </script>
+</body>
+</html>
